@@ -248,7 +248,7 @@ if __name__ == "__main__":
     SNAKE_ICON_WIDTH = 15
     
     BACKGROUND_COLOUR = "black"   #you may change this colour if you wish
-    ICON_COLOUR = "chartreuse3"        #you may change this colour if you wish
+    ICON_COLOUR = "SeaGreen1"        #you may change this colour if you wish
 
     gameQueue = queue.Queue()     #instantiate a queue object using python's queue class
 
