@@ -171,7 +171,6 @@ class Game():
         self.isGameOver(NewSnakeCoordinates)        # check if the game is over before appending the new head to the list
         self.snakeCoordinates.append(NewSnakeCoordinates)
 
-        preyEaten = False
         currentScore = self.score
         # check for prey consumption - that means new snake coordinates adjusted with SNAKE_ICON_WIDTH is within prey rectangle
         # if we have eaten prey, then we don't have to remove a point at the end of the snake
@@ -235,11 +234,12 @@ class Game():
         """
         THRESHOLD = 15   #sets how close prey can be to borders
         #complete the method implementation below
-        randx = random.randint(THRESHOLD,WINDOW_WIDTH-THRESHOLD)
-        randy = random.randint(THRESHOLD,WINDOW_HEIGHT-THRESHOLD)
-        self.preyX = randx                                              # save the prey coordinates to internal member
-        self.preyY = randy 
-        self.queue.put({"prey":(randx-5,randy-5,randx+5,randy+5)})      # add key-value pair with prey rectangle coords to the queue
+
+        # randx = random.randint(THRESHOLD,WINDOW_WIDTH-THRESHOLD)
+        # randy = random.randint(THRESHOLD,WINDOW_HEIGHT-THRESHOLD)
+        self.preyX = random.randint(THRESHOLD,WINDOW_WIDTH-THRESHOLD)                       # save the prey coordinates to internal member
+        self.preyY = random.randint(THRESHOLD,WINDOW_HEIGHT-THRESHOLD)
+        self.queue.put({"prey":(self.preyX-5,self.preyY-5,self.preyX+5,self.preyY+5)})      # tell GUI to update the screen with new prey 
 
 if __name__ == "__main__":
     #some constants for our GUI
