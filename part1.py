@@ -128,7 +128,7 @@ class Game():
             Use the SPEED constant to set how often the move tasks
             are generated.
         """
-        SPEED = 0.01     #speed of snake updates (sec)
+        SPEED = 0.1     #speed of snake updates (sec)
         while self.gameNotOver:
             time.sleep(SPEED)       # delay next loop by interval set by speed
             self.move()             # execute move to update internal members
@@ -173,17 +173,15 @@ class Game():
 
         preyEaten = False
         currentScore = self.score
-        # check for prey consumption - that means new snake coordinates is within prey rectangle
+        # check for prey consumption - that means new snake coordinates adjusted with SNAKE_ICON_WIDTH is within prey rectangle
         # if we have eaten prey, then we don't have to remove a point at the end of the snake
         # if we have not eaten prey, then we have to remove the last point to keep the snake length constant
-        if(abs(self.preyX - NewSnakeCoordinates[0])<=5 and abs(self.preyY - NewSnakeCoordinates[1])<=5):
+        if(abs(self.preyX - NewSnakeCoordinates[0])<=SNAKE_ICON_WIDTH/2+5 and abs(self.preyY - NewSnakeCoordinates[1])<=SNAKE_ICON_WIDTH/2+5):
             self.createNewPrey()
             self.score = currentScore + 1
             self.queue.put({"score":currentScore + 1})
         else:
             self.snakeCoordinates.pop(0)            # remove the earliest snake coordinate if we didn't eat anything
-
-
 
         
     def calculateNewCoordinates(self) -> tuple:
@@ -200,13 +198,13 @@ class Game():
         nextX = lastX
         nextY = lastY
         if(self.direction == "Left"):
-            nextX = nextX -1
+            nextX = nextX -10
         elif(self.direction == "Right"):
-            nextX = nextX +1
+            nextX = nextX +10
         elif(self.direction == "Up"):
-            nextY = nextY -1
+            nextY = nextY -10
         elif(self.direction == "Down"):
-            nextY = nextY +1            # DOWN actually does y+1
+            nextY = nextY +10            # DOWN actually does y+1
         return (nextX,nextY)
 
 
