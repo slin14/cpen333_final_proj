@@ -112,7 +112,8 @@ class Game():
         self.score = 0
         #starting length and location of the snake
         #note that it is a list of tuples, each being an
-        # (x, y) tuple. Initially its size is 5 tuples.       
+        # (x, y) tuple. Initially its size is 5 tuples.  
+        # Note that the snake appears to have length N*10 by default - i.e. each increment is length 10     
         self.snakeCoordinates = [(495, 55), (485, 55), (475, 55),
                                  (465, 55), (455, 55)]
         #initial direction of the snake
@@ -128,12 +129,11 @@ class Game():
             Use the SPEED constant to set how often the move tasks
             are generated.
         """
-        SPEED = 0.1     #speed of snake updates (sec)
+        SPEED = 0.05     #speed of snake updates (sec)
         while self.gameNotOver:
             time.sleep(SPEED)       # delay next loop by interval set by speed
             self.move()             # execute move to update internal members
             self.queue.put({"move":self.snakeCoordinates})  # add the move to UI queue handler with the new data
-            #pass #remove this line from your implemenation
 
     def whenAnArrowKeyIsPressed(self, e) -> None:
         """ 
@@ -177,9 +177,9 @@ class Game():
         # if we have eaten prey, then we don't have to remove a point at the end of the snake
         # if we have not eaten prey, then we have to remove the last point to keep the snake length constant
         if(abs(self.preyX - NewSnakeCoordinates[0])<=SNAKE_ICON_WIDTH/2+5 and abs(self.preyY - NewSnakeCoordinates[1])<=SNAKE_ICON_WIDTH/2+5):
-            self.createNewPrey()
-            self.score = currentScore + 1
-            self.queue.put({"score":currentScore + 1})
+            self.createNewPrey()                    # creates the new coordinates and tells the GUI to draw it whenever it can
+            self.score = currentScore + 1           # increment internal score
+            self.queue.put({"score":currentScore + 1})  # tell the GUI to update the score whenever it can
         else:
             self.snakeCoordinates.pop(0)            # remove the earliest snake coordinate if we didn't eat anything
 
@@ -204,7 +204,7 @@ class Game():
         elif(self.direction == "Up"):
             nextY = nextY -10
         elif(self.direction == "Down"):
-            nextY = nextY +10            # DOWN actually does y+1
+            nextY = nextY +10            # DOWN actually does a y++ increment
         return (nextX,nextY)
 
 
@@ -237,9 +237,9 @@ class Game():
         #complete the method implementation below
         randx = random.randint(THRESHOLD,WINDOW_WIDTH-THRESHOLD)
         randy = random.randint(THRESHOLD,WINDOW_HEIGHT-THRESHOLD)
-        self.queue.put({"prey":(randx-5,randy-5,randx+5,randy+5)})      # add key-value pair with prey rectangle coords to the queue
         self.preyX = randx                                              # save the prey coordinates to internal member
-        self.preyY = randy
+        self.preyY = randy 
+        self.queue.put({"prey":(randx-5,randy-5,randx+5,randy+5)})      # add key-value pair with prey rectangle coords to the queue
 
 if __name__ == "__main__":
     #some constants for our GUI
