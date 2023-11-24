@@ -104,7 +104,7 @@ class Game():
            This initializer sets the initial snake coordinate list, movement
            direction, and arranges for the first prey to be created.
         """
-        # Am I allowed to add prey coordinates? I can't figure out how extract them otherwise
+        # Add members for prey x and y center position. Should check if allowed
         self.preyX = 0
         self.preyY = 0
 
@@ -130,9 +130,9 @@ class Game():
         """
         SPEED = 0.01     #speed of snake updates (sec)
         while self.gameNotOver:
-            time.sleep(SPEED)       #delay next loop by interval set by speed
-            self.move()
-            self.queue.put({"move":self.snakeCoordinates})
+            time.sleep(SPEED)       # delay next loop by interval set by speed
+            self.move()             # execute move to update internal members
+            self.queue.put({"move":self.snakeCoordinates})  # add the move to UI queue handler with the new data
             #pass #remove this line from your implemenation
 
     def whenAnArrowKeyIsPressed(self, e) -> None:
@@ -221,8 +221,8 @@ class Game():
         x, y = snakeCoordinates
         #complete the method implementation below
         if((x,y) in self.snakeCoordinates or x<0 or x>WINDOW_WIDTH or y<0 or y>WINDOW_HEIGHT):
-            self.gameNotOver = False
-            self.queue.put({"game_over":True})
+            self.gameNotOver = False            # update internal member
+            self.queue.put({"game_over":True})  # send updated data to UI queue 
 
     def createNewPrey(self) -> None:
         """ 
@@ -240,7 +240,7 @@ class Game():
         randx = random.randint(THRESHOLD,WINDOW_WIDTH-THRESHOLD)
         randy = random.randint(THRESHOLD,WINDOW_HEIGHT-THRESHOLD)
         self.queue.put({"prey":(randx-5,randy-5,randx+5,randy+5)})      # add key-value pair with prey rectangle coords to the queue
-        self.preyX = randx
+        self.preyX = randx                                              # save the prey coordinates to internal member
         self.preyY = randy
 
 if __name__ == "__main__":
