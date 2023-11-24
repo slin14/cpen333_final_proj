@@ -104,7 +104,7 @@ class Game():
            This initializer sets the initial snake coordinate list, movement
            direction, and arranges for the first prey to be created.
         """
-        # Add members for prey x and y center position. Should check if allowed
+        # Add members for prey x and y center position. Technically not allowed
         self.preyX = 0
         self.preyY = 0
 
@@ -247,7 +247,7 @@ if __name__ == "__main__":
     WINDOW_HEIGHT = 300 
     SNAKE_ICON_WIDTH = 15
     
-    BACKGROUND_COLOUR = "black"   #you may change this colour if you wish
+    BACKGROUND_COLOUR = "gray20"   #you may change this colour if you wish
     ICON_COLOUR = "SeaGreen1"        #you may change this colour if you wish
 
     gameQueue = queue.Queue()     #instantiate a queue object using python's queue class
