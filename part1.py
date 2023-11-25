@@ -104,9 +104,6 @@ class Game():
            This initializer sets the initial snake coordinate list, movement
            direction, and arranges for the first prey to be created.
         """
-        # Add members for prey x and y center position. Technically not allowed
-        self.preyX = 0
-        self.preyY = 0
 
         self.queue = queue
         self.score = 0
@@ -175,7 +172,11 @@ class Game():
         # check for prey consumption - that means new snake coordinates adjusted with SNAKE_ICON_WIDTH is within prey rectangle
         # if we have eaten prey, then we don't have to remove a point at the end of the snake
         # if we have not eaten prey, then we have to remove the last point to keep the snake length constant
-        if(abs(self.preyX - NewSnakeCoordinates[0])<=SNAKE_ICON_WIDTH/2+5 and abs(self.preyY - NewSnakeCoordinates[1])<=SNAKE_ICON_WIDTH/2+5):
+        
+        preyCoord=gui.canvas.coords(gui.preyIcon)         # returns x1,y1,x2,y2 of the prey rectangle
+        preyX = (preyCoord[0]+preyCoord[2])/2
+        preyY = (preyCoord[1]+preyCoord[3])/2
+        if(abs(preyX - NewSnakeCoordinates[0])<=SNAKE_ICON_WIDTH/2+5 and abs(preyY - NewSnakeCoordinates[1])<=SNAKE_ICON_WIDTH/2+5):
             self.createNewPrey()                    # creates the new coordinates and tells the GUI to draw it whenever it can
             self.score = currentScore + 1           # increment internal score
             self.queue.put({"score":currentScore + 1})  # tell the GUI to update the score whenever it can
@@ -235,11 +236,9 @@ class Game():
         THRESHOLD = 15   #sets how close prey can be to borders
         #complete the method implementation below
 
-        # randx = random.randint(THRESHOLD,WINDOW_WIDTH-THRESHOLD)
-        # randy = random.randint(THRESHOLD,WINDOW_HEIGHT-THRESHOLD)
-        self.preyX = random.randint(THRESHOLD,WINDOW_WIDTH-THRESHOLD)                       # save the prey coordinates to internal member
-        self.preyY = random.randint(THRESHOLD,WINDOW_HEIGHT-THRESHOLD)
-        self.queue.put({"prey":(self.preyX-5,self.preyY-5,self.preyX+5,self.preyY+5)})      # tell GUI to update the screen with new prey 
+        randX = random.randint(THRESHOLD,WINDOW_WIDTH-THRESHOLD)
+        randY = random.randint(THRESHOLD,WINDOW_HEIGHT-THRESHOLD)
+        self.queue.put({"prey":(randX-5,randY-5,randX+5,randY+5)})      # tell GUI to update the screen with new prey 
 
 if __name__ == "__main__":
     #some constants for our GUI
