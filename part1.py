@@ -174,8 +174,10 @@ class Game():
         # if we have not eaten prey, then we have to remove the last point to keep the snake length constant
         
         preyCoord=gui.canvas.coords(gui.preyIcon)         # returns x1,y1,x2,y2 of the prey rectangle
-        preyX = (preyCoord[0]+preyCoord[2])/2
+        preyX = (preyCoord[0]+preyCoord[2])/2             # find center of prey rectangle
         preyY = (preyCoord[1]+preyCoord[3])/2
+
+        # if the snake's width is within the prey box
         if(abs(preyX - NewSnakeCoordinates[0])<=SNAKE_ICON_WIDTH/2+5 and abs(preyY - NewSnakeCoordinates[1])<=SNAKE_ICON_WIDTH/2+5):
             self.createNewPrey()                    # creates the new coordinates and tells the GUI to draw it whenever it can
             self.score = currentScore + 1           # increment internal score
@@ -195,6 +197,9 @@ class Game():
         """
         lastX, lastY = self.snakeCoordinates[-1]
         #complete the method implementation below
+
+        # change internal state based on arrow inputs, otherwise don't change 
+        # down is +Y, up is -Y
         nextX = lastX
         nextY = lastY
         if(self.direction == "Left"):
@@ -236,7 +241,8 @@ class Game():
         THRESHOLD = 15   #sets how close prey can be to borders
         #complete the method implementation below
 
-        randX = random.randint(THRESHOLD,WINDOW_WIDTH-THRESHOLD)
+        
+        randX = random.randint(THRESHOLD,WINDOW_WIDTH-THRESHOLD)        # generate random x and y, limit to threshold 
         randY = random.randint(THRESHOLD,WINDOW_HEIGHT-THRESHOLD)
         self.queue.put({"prey":(randX-5,randY-5,randX+5,randY+5)})      # tell GUI to update the screen with new prey 
 
