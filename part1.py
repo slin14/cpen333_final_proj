@@ -104,11 +104,13 @@ class Game():
            This initializer sets the initial snake coordinate list, movement
            direction, and arranges for the first prey to be created.
         """
+
         self.queue = queue
         self.score = 0
         #starting length and location of the snake
         #note that it is a list of tuples, each being an
-        # (x, y) tuple. Initially its size is 5 tuples.       
+        # (x, y) tuple. Initially its size is 5 tuples.  
+        # Note that the snake appears to have length N*10 by default - i.e. each increment is length 10     
         self.snakeCoordinates = [(495, 55), (485, 55), (475, 55),
                                  (465, 55), (455, 55)]
         #initial direction of the snake
@@ -124,10 +126,11 @@ class Game():
             Use the SPEED constant to set how often the move tasks
             are generated.
         """
-        SPEED = 0.15     #speed of snake updates (sec)
+        SPEED = 0.05     #speed of snake updates (sec)
         while self.gameNotOver:
-            #complete the method implementation below
-            pass #remove this line from your implemenation
+            time.sleep(SPEED)       # delay next loop by interval set by speed
+            self.move()             # execute move to update internal members
+            self.queue.put({"move":self.snakeCoordinates})  # add the move to UI queue handler with the new data
 
     def whenAnArrowKeyIsPressed(self, e) -> None:
         """ 
@@ -162,7 +165,27 @@ class Game():
         NewSnakeCoordinates = self.calculateNewCoordinates()
         #complete the method implementation below
 
+        self.isGameOver(NewSnakeCoordinates)        # check if the game is over before appending the new head to the list
+        self.snakeCoordinates.append(NewSnakeCoordinates)
 
+        currentScore = self.score
+        # check for prey consumption - that means new snake coordinates adjusted with SNAKE_ICON_WIDTH is within prey rectangle
+        # if we have eaten prey, then we don't have to remove a point at the end of the snake
+        # if we have not eaten prey, then we have to remove the last point to keep the snake length constant
+        
+        preyCoord=gui.canvas.coords(gui.preyIcon)         # returns x1,y1,x2,y2 of the prey rectangle
+        preyX = (preyCoord[0]+preyCoord[2])/2             # find center of prey rectangle
+        preyY = (preyCoord[1]+preyCoord[3])/2
+
+        # if the snake's width is within the prey box
+        if(abs(preyX - NewSnakeCoordinates[0])<=SNAKE_ICON_WIDTH/2+5 and abs(preyY - NewSnakeCoordinates[1])<=SNAKE_ICON_WIDTH/2+5):
+            self.createNewPrey()                    # creates the new coordinates and tells the GUI to draw it whenever it can
+            self.score = currentScore + 1           # increment internal score
+            self.queue.put({"score":currentScore + 1})  # tell the GUI to update the score whenever it can
+        else:
+            self.snakeCoordinates.pop(0)            # remove the earliest snake coordinate if we didn't eat anything
+
+        
     def calculateNewCoordinates(self) -> tuple:
         """
             This method calculates and returns the new 
@@ -175,6 +198,20 @@ class Game():
         lastX, lastY = self.snakeCoordinates[-1]
         #complete the method implementation below
 
+        # change internal state based on arrow inputs, otherwise don't change 
+        # down is +Y, up is -Y
+        nextX = lastX
+        nextY = lastY
+        if(self.direction == "Left"):
+            nextX = nextX -10
+        elif(self.direction == "Right"):
+            nextX = nextX +10
+        elif(self.direction == "Up"):
+            nextY = nextY -10
+        elif(self.direction == "Down"):
+            nextY = nextY +10            # DOWN actually does a y++ increment
+        return (nextX,nextY)
+
 
     def isGameOver(self, snakeCoordinates) -> None:
         """
@@ -186,6 +223,9 @@ class Game():
         """
         x, y = snakeCoordinates
         #complete the method implementation below
+        if((x,y) in self.snakeCoordinates or x<0 or x>WINDOW_WIDTH or y<0 or y>WINDOW_HEIGHT):
+            self.gameNotOver = False            # update internal member
+            self.queue.put({"game_over":True})  # send updated data to UI queue 
 
     def createNewPrey(self) -> None:
         """ 
@@ -201,6 +241,10 @@ class Game():
         THRESHOLD = 15   #sets how close prey can be to borders
         #complete the method implementation below
 
+        
+        randX = random.randint(THRESHOLD,WINDOW_WIDTH-THRESHOLD)        # generate random x and y, limit to threshold 
+        randY = random.randint(THRESHOLD,WINDOW_HEIGHT-THRESHOLD)
+        self.queue.put({"prey":(randX-5,randY-5,randX+5,randY+5)})      # tell GUI to update the screen with new prey 
 
 if __name__ == "__main__":
     #some constants for our GUI
@@ -208,8 +252,8 @@ if __name__ == "__main__":
     WINDOW_HEIGHT = 300 
     SNAKE_ICON_WIDTH = 15
     
-    BACKGROUND_COLOUR = "green"   #you may change this colour if you wish
-    ICON_COLOUR = "yellow"        #you may change this colour if you wish
+    BACKGROUND_COLOUR = "gray20"   #you may change this colour if you wish
+    ICON_COLOUR = "SeaGreen1"        #you may change this colour if you wish
 
     gameQueue = queue.Queue()     #instantiate a queue object using python's queue class
 
